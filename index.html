@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Firebase Auth: Google - TechFerment</title>
+  </head>
+  <body>
+    <h1>Welcome : Firebase Auth: Google</h1>
+    <p>TechFerment: Firebase For Web</p>
+
+    <div id="LoginScreen">
+      <button id="login">Login with Google</button>
+    </div>
+
+    <div id="dashboard">
+      <div id="userDetails"></div>
+      <input type="file" onchange="uploadFile()" id="files" name="files[]" multiple />
+      <div id="urls"></div>
+      <button id="logout">Logout</button>
+    </div>
+
+    <!-- The core Firebase JS SDK is always required and must be listed first --> 
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-storage.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+    <script>
+
+      // Your web app's Firebase configuration
+      
+      const firebaseConfig = {
+        apiKey: "AIzaSyDaH58cQDfBJSRaFDURAOhrTuLNHN3833c",
+        authDomain: "cloud-computing-4fc55.firebaseapp.com",
+        databaseURL: "https://cloud-computing-4fc55-default-rtdb.firebaseio.com",
+        projectId: "cloud-computing-4fc55",
+        storageBucket: "cloud-computing-4fc55.appspot.com",
+        messagingSenderId: "352150432047",
+        appId: "1:352150432047:web:da1e9ae8c3c073398859da",
+        measurementId: "G-0WPGS1MRE4"
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      downloadFile();
+      document.getElementById('dashboard').style.display="none"
+
+      document.getElementById('login').addEventListener('click', GoogleLogin)
+      document.getElementById('logout').addEventListener('click', LogoutUser)
+
+      let provider = new firebase.auth.GoogleAuthProvider()
+
+      
+      //Data Base
+
+    //function to save file
+    function uploadFile(){
+      
+      // Created a Storage Reference with root dir
+      var storageRef = firebase.storage().ref();
+      // Get the file from DOM
+      var file = document.getElementById("files").files[0];
+      console.log(file);
+      
+      //dynamically set reference to the file name
+      var thisRef = storageRef.child(file.name);
+
+      //put request upload file to firebase storage
+      thisRef.put(file).then(function(snapshot) {
+         alert("File Uploaded")
+         console.log('Uploaded a blob or file!');
+      });
+    }
+   
+    function downloadFile(){
+      let fileurls='';
+      var storageRef = firebase.storage().ref();
+
+
+    // Now we get the references of these images
+    storageRef.listAll().then(function(result) {
+      result.items.forEach(function(imageRef) {
+        // And finally display them
+        imageRef.getDownloadURL().then(function(url) {
+        // TODO: Display the image own the UI
+        this.fileurls+='<a href='+url+'>'+imageRef+'</a><br>';
+      }).catch(function(error) {
+        // Handle any errors
+        console.log(error);
+      });
+      });
+      }).catch(function(error) {
+        // Handle any errors
+        console.log(error);
+      });
+    document.getElementById("urls").innerHTML = fileurls;
+    }
+
+
+      function GoogleLogin(){
+        console.log('Login Btn Call')
+        firebase.auth().signInWithPopup(provider).then(res=>{
+          console.log(res.user)
+          document.getElementById('LoginScreen').style.display="none"
+          document.getElementById('dashboard').style.display="block"
+          showUserDetails(res.user)
+        }).catch(e=>{
+          console.log(e)
+        })
+      }
+      // <img src="${user.photoURL}">
+      function showUserDetails(user){
+        document.getElementById('userDetails').innerHTML = `
+          <p>Name: ${user.displayName}</p>
+          <p>Email: ${user.email}</p>
+        `
+      }
+
+      // function checkAuthState(){
+      //   firebase.auth().onAuthStateChanged(user=>{
+      //     if(user){
+      //       document.getElementById('LoginScreen').style.display="none"
+      //       document.getElementById('dashboard').style.display="block"
+      //       showUserDetails(user)
+      //     }else{
+
+      //     }
+      //   })
+      // }
+
+      function LogoutUser(){
+        console.log('Logout Btn Call')
+        firebase.auth().signOut().then(()=>{
+          document.getElementById('LoginScreen').style.display="block"
+          document.getElementById('dashboard').style.display="none"
+        }).catch(e=>{
+          console.log(e)
+        })
+      }
+      // checkAuthState()
+    </script>
+  </body>
+</html>
