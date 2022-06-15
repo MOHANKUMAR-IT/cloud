@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-firestore.js"></script>
+
+</head>
+<body>
+
+    <div id="userDetails"></div>
+
+
+    <script>
+        const firebaseConfig = {
+        apiKey: "AIzaSyDaH58cQDfBJSRaFDURAOhrTuLNHN3833c",
+        authDomain: "cloud-computing-4fc55.firebaseapp.com",
+        databaseURL: "https://cloud-computing-4fc55-default-rtdb.firebaseio.com",
+        projectId: "cloud-computing-4fc55",
+        storageBucket: "cloud-computing-4fc55.appspot.com",
+        messagingSenderId: "352150432047",
+        appId: "1:352150432047:web:da1e9ae8c3c073398859da",
+        measurementId: "G-0WPGS1MRE4"
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+        checkAuthState();
+        function showUserDetails(user){
+        document.getElementById('userDetails').innerHTML = `
+          <p>Name: ${user.displayName}</p>
+          <p>Email: ${user.email}</p>
+        `
+       
+      }
+         function checkAuthState(){
+        firebase.auth().onAuthStateChanged(user=>{
+          if(user){
+            showUserDetails(user)
+          }else{
+
+          }
+        })
+      }
+    </script>
+</body>
+</html>
