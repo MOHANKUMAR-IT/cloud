@@ -25,6 +25,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-firestore.js"></script>
 
     <!-- TODO: Add SDKs for Firebase products that you want to use
      https://firebase.google.com/docs/web/setup#available-libraries -->
@@ -46,13 +47,13 @@
 
       // Initialize Firebase
       firebase.initializeApp(firebaseConfig);
-      downloadFile();
+      
       document.getElementById('dashboard').style.display="none"
 
       document.getElementById('login').addEventListener('click', GoogleLogin)
       document.getElementById('logout').addEventListener('click', LogoutUser)
 
-      let provider = new firebase.auth.GoogleAuthProvider()
+      let provider = new firebase.auth.GoogleAuthProvider();
 
       
       //Data Base
@@ -80,24 +81,59 @@
       let fileurls='';
       var storageRef = firebase.storage().ref();
 
-
     // Now we get the references of these images
-    storageRef.listAll().then(function(result) {
-      result.items.forEach(function(imageRef) {
-        // And finally display them
-        imageRef.getDownloadURL().then(function(url) {
-        // TODO: Display the image own the UI
-        this.fileurls+='<a href='+url+'>'+imageRef+'</a><br>';
-      }).catch(function(error) {
-        // Handle any errors
-        console.log(error);
+      storageRef.listAll().then(function(result) {
+        result.items.forEach(function(imageRef) {
+          // And finally display them
+          imageRef.getDownloadURL().then(function(url) {
+          // TODO: Display the image own the UI'
+              console.log(url);
+              fileurls+='<a href='+url+'>'+imageRef+'</a><br>';
+            }).catch(function(error) {
+              // Handle any errors
+              console.log(error);
+            });
+        });
+        }).catch(function(error) {
+          // Handle any errors
+          console.log(error);
+        });
+
+
+      document.getElementById("urls").innerHTML = "<p>"+fileurls+"</p>";
+      console.log(fileurls);
+
+
+
+      const db = firebase.firestore();
+      firebase
+      .firestore()
+      .collection("books")
+      .add({
+        title: "Of Mice and Men",
+      })
+      .then((ref) => {
+        console.log("Added doc with ID: ", ref.id);
+        // Added doc with ID:  ZzhIgLqELaoE3eSsOazu
       });
-      });
-      }).catch(function(error) {
-        // Handle any errors
-        console.log(error);
-      });
-    document.getElementById("urls").innerHTML = fileurls;
+      const booksRef = firebase.firestore().collection('clouddbaas');
+      booksRef
+        .get()
+        .then((snapshot) => {
+          const data = snapshot.docs.map((doc) => ({
+            id: doc.id, ...doc.data(),
+          }));
+          console.log("All data in 'books' collection", data); 
+          // [ { id: 'glMeZvPpTN1Ah31sKcnj', title: 'The Great Gatsby' } ]
+        });
+        firebase
+        .firestore()
+        .collection("books")
+        .doc("another book")
+        .delete()
+        .then(() => console.log("Document deleted")) // Document deleted
+        .catch((error) => console.error("Error deleting document", error));
+
     }
 
 
@@ -108,6 +144,7 @@
           document.getElementById('LoginScreen').style.display="none"
           document.getElementById('dashboard').style.display="block"
           showUserDetails(res.user)
+          downloadFile();
         }).catch(e=>{
           console.log(e)
         })
@@ -118,6 +155,7 @@
           <p>Name: ${user.displayName}</p>
           <p>Email: ${user.email}</p>
         `
+       
       }
 
       // function checkAuthState(){
