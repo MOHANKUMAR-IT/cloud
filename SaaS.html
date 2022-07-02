@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=4, maximum-scale=1" />
+</head><body>
+
+<div>
+<input type="file" id="files" multiple /><br /><br />
+<button id="send">Upload</button>
+<p id="uploading"></p>
+<progress value="0" max="100" id="progress"></progress>
+<br /><br /><br /><br />
+
+<input type="text" name="nombre" id="name" value ="hello.wav" /><br /><br />
+<button id="get_url">Get url file</button>
+<p id="response"></p>
+
+<button id="list_files">List files</button>
+<p id="response_list"></p>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/7.15.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.15.1/firebase-storage.js"></script>
+
+<script>
+ const firebaseConfig = {
+        apiKey: "AIzaSyB2dA7NtAUeYAU2k4EPqIbTOsOIS0UiZ70",
+        authDomain: "training-ff017.firebaseapp.com",
+        projectId: "training-ff017",
+        storageBucket: "training-ff017.appspot.com",
+        messagingSenderId: "837832640127",
+        appId: "1:837832640127:web:11370ecac2fe42bbdf614a",
+        measurementId: "G-CLZ5BXFV1T"
+      };
+
+  firebase.initializeApp(firebaseConfig);
+</script>
+
+<script>
+//// CHOICE /////
+var files = [];
+document.getElementById("files").addEventListener("change", function(e) {
+  files = e.target.files;
+});
+
+///// SEND FILES //////
+document.getElementById("send").addEventListener("click", function() {
+
+  if (files.length != 0) {
+    for (let i = 0; i < files.length; i++) {
+      var storage = firebase.storage().ref(files[i].name);
+      var upload = storage.put(files[i]);
+      upload.on("state_changed", function progress(snapshot) {
+          var percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          document.getElementById("progress").value = percentage;
+        },
+
+        function error() {alert("Error uploading file.");},
+
+        function complete() {document.getElementById( "uploading").innerHTML += `${files[i].name} uploaded <br />`;}); }
+		
+    } else {alert("No file chosen."); }
+});
+////////////////////////////////////
+
+// GET URL ////////////////////
+document.getElementById("get_url").addEventListener("click", function() {
+  var get_url_file = document.getElementById("name").value;
+  var storage = firebase.storage().ref(get_url_file);
+  storage.getDownloadURL().then(function(url) {document.getElementById("response").innerHTML += `${url}  <br />`; })
+                                         .catch(function(error) {alert("Error encountered."); });
+
+});
+////////////////////////////////////
+
+
+// LIST FILES ////////////////////
+document.getElementById("list_files").addEventListener("click", function() {
+  var storageRef = firebase.storage().ref();
+  storageRef.listAll().then(function(result) {
+  result.items.forEach(function(urlFile) {document.getElementById("response_list").innerHTML +=  `${urlFile}  <br />`; });
+                              }).catch(function(error) {alert("No file chosen."); });											
+});
+
+////////////////////////////////////
+</script>
+</body>
+</html>
+<!-- 
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Welcome to Firebase Hosting</title>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-firestore.js"></script>
+  </head>
+  <body>
+    <input type="file" onchange="uploadFile()" id="files" name="files[]" multiple />
+    <button onclick="downloadFile()">show</button>
+    <def id="imgs"></def>
+    <script>
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+        apiKey: "AIzaSyB2dA7NtAUeYAU2k4EPqIbTOsOIS0UiZ70",
+        authDomain: "training-ff017.firebaseapp.com",
+        projectId: "training-ff017",
+        storageBucket: "training-ff017.appspot.com",
+        messagingSenderId: "837832640127",
+        appId: "1:837832640127:web:11370ecac2fe42bbdf614a",
+        measurementId: "G-CLZ5BXFV1T"
+      };
+
+      firebase.initializeApp(firebaseConfig);
+
+      function uploadFile(){
+      
+        // Created a Storage Reference with root dir
+        var storageRef = firebase.storage().ref();
+        // Get the file from DOM
+        var file = document.getElementById("files").files[0];
+        console.log(file);
+        
+        //dynamically set reference to the file name
+        var thisRef = storageRef.child(file.name);
+
+        //put request upload file to firebase storage
+        thisRef.put(file).then(function(snapshot) {
+          alert("File Uploaded")
+          console.log('Uploaded a blob or file!');
+        });
+    }
+
+    function downloadFile(){
+      let fileurls='';
+      var storageRef = firebase.storage().ref();
+
+    // Now we get the references of these images
+      storageRef.listAll().then(function(result) {
+        result.items.forEach(function(imageRef) {
+          // And finally display them
+          imageRef.getDownloadURL().then(function(url) {
+          // TODO: Display the image own the UI'
+              console.log(fileurls);
+              this.fileurls+=`<img src="${url}" style="width:200px;height:200px;">`
+              
+            }).catch(function(error) {
+              // Handle any errors
+              console.log(error);
+            });
+            
+        });
+        }).catch(function(error) {
+          // Handle any errors
+          console.log(error);
+        });
+        document.getElementById("imgs").innerHTML += fileurls;
+    }
+
+    </script>
+  </body>
+</html> -->
