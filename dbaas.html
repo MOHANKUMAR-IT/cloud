@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Firebase Auth: Google - TechFerment</title>
+  </head>
+  
+
+    <!-- The core Firebase JS SDK is always required and must be listed first --> 
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-firestore.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+  <body>
+ 
+
+    <script>
+
+      // Your web app's Firebase configuration
+      
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyB2dA7NtAUeYAU2k4EPqIbTOsOIS0UiZ70",
+  authDomain: "training-ff017.firebaseapp.com",
+  projectId: "training-ff017",
+  storageBucket: "training-ff017.appspot.com",
+  messagingSenderId: "837832640127",
+  appId: "1:837832640127:web:11370ecac2fe42bbdf614a",
+  measurementId: "G-CLZ5BXFV1T"
+};
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+    
+    const db = firebase.firestore();
+      firebase
+      .firestore()
+      .collection("books")
+      .add({
+        title: "Of Mice and Men",
+      })
+      .then((ref) => {
+        console.log("Added doc with ID: ", ref.id);
+        // Added doc with ID:  ZzhIgLqELaoE3eSsOazu
+      });
+      const booksRef = firebase.firestore().collection('clouddbaas');
+      booksRef
+        .get()
+        .then((snapshot) => {
+          const data = snapshot.docs.map((doc) => ({
+            id: doc.id, ...doc.data(),
+          }));
+          console.log("All data in 'books' collection", data); 
+          // [ { id: 'glMeZvPpTN1Ah31sKcnj', title: 'The Great Gatsby' } ]
+        });
+
+
+        firebase
+        .firestore()
+        .collection("books")
+        .doc("another book")
+        .delete()
+        .then(() => console.log("Document deleted")) // Document deleted
+        .catch((error) => console.error("Error deleting document", error));
+
+//     // Initialize Cloud Firestore and get a reference to the service
+//     const db = getFirestore(app);
+
+//     const usersDb = db.collection('users'); 
+//     let liam = usersDb.doc('lragozzine'); 
+//     await liam.set({
+//       first: 'Liam',
+//       last: 'Ragozzine',
+//       address: '133 5th St., San Francisco, CA',
+//       birthday: '05/13/1990',
+//       age: '30'
+//       });
+//       await usersDb.doc('vpeluso').set({
+//         first: 'Vanessa',
+//         last: 'Peluso',
+//         address: '49 Main St., Tampa, FL',
+//         birthday: '11/30/1977',
+//         age: '47'
+//         });
+//       // get collection
+//       const users = await db.collection('users').get();
+
+//       // get document
+//       liam = await db.collection('users').doc('liam').get();
+//       if (!liam.exists) {
+//       console.log('No document');
+//       } else {
+//       console.log(liam.data());
+//       }
+
+
+//       const under30 = await
+//       db.collection('users').where('age', '<=', 40).get();
+//           liam = db.collection('users').doc('liam');
+
+//       const observer = liam.onSnapshot(snapshot => {
+//         console.log(`changes: ${snapshot}`);
+//         }, err => {
+//         console.log(`Error: ${err}`);
+//       });
+
+
+//       liam = await
+//         db.collection('users').doc('lragozzine').set({
+//           married: true
+//         }, { merge: true });
+      
+//         liam = await
+//  db.collection('users').doc('lragozzine').update({
+//    married: true
+//  });
+
+//  const liam = await
+//  db.collection('users').doc('lragozzine').update({
+//    'favorites.item': 'Ties'
+//  });
+
+//  db.collection('users').doc('lragozzine').delete(); 
+
+//  const liamOrders = await db.collection('users').doc('lragozzine')
+//  .collection('orders').doc('123').get();
+</script>
