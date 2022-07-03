@@ -18,6 +18,20 @@ let movies = [{
 app.get('/movie',(req,res)=>{
     res.json(movies)
 });
+app.put('/movie/:id',(req,res)=>{
+    const id = req.params.id;
+    const movie = movies.find(c=> c.id===parseInt(req.params.id));
+    if(!movie) res.send("Movie Does not exist");
+    for(var i in movies){
+        if(movies[i][id] == req.body.id){
+            movies[i][title] = req.body.title;
+            movies[i][director] = req.body.director;
+            movies[i][releaseDate] = req.body.releaseDate;
+            res.json(movies);
+        }
+    }
+    res.json(movies);
+}
 app.get('/movie/:id',(req,res)=>{
     const id = req.params.id;
     for (let movie of movies){
